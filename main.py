@@ -2,7 +2,7 @@ import tkinter as tk
 import tkinter.messagebox as messagebox
 import time
 import random
-import os
+
 
 # Function to choose a random sample text from a file
 def choose_random_sample_text(filename):
@@ -10,10 +10,12 @@ def choose_random_sample_text(filename):
         sample_texts = file.readlines()
     return random.choice(sample_texts).strip()
 
+
 # Constants
-SAMPLE_TEXT_FILE = "sample_texts.txt"  # Text file containing sample texts
-SCORES_FILE = "typing_scores.txt"  # File to store typing scores
-TEST_DURATION = 60  # Test duration in seconds
+SAMPLE_TEXT_FILE = "sample_texts.txt"
+SCORES_FILE = "typing_scores.txt"
+TEST_DURATION = 60
+
 
 # Function to calculate words per minute
 def calculate_wpm():
@@ -25,25 +27,27 @@ def calculate_wpm():
     save_score(wpm)
     show_wpm_popup(wpm)
 
-# Function to save typing speed score to a file
+
+# Function to save the score to a file
 def save_score(wpm):
-    if not os.path.isfile(SCORES_FILE):
-        with open(SCORES_FILE, "w") as file:
-            file.write(f"{wpm}\n")
-    else:
-        with open(SCORES_FILE, "a") as file:
-            file.write(f"{wpm}\n")
+    with open(SCORES_FILE, "a") as file:
+        file.write(f"{wpm}\n")
+
 
 # Function to get the top score from the scores file
 def get_top_score():
-    if not os.path.isfile(SCORES_FILE):
+    scores = []
+    try:
+        with open(SCORES_FILE, "r") as file:
+            scores = [float(line.strip()) for line in file]
+    except FileNotFoundError:
+        pass
+
+    if scores:
+        return max(scores)
+    else:
         return None
-    with open(SCORES_FILE, "r") as file:
-        scores = [float(line.strip()) for line in file]
-        if scores:
-            return max(scores)
-        else:
-            return None
+
 
 # Function to show a popup with the calculated WPM
 def show_wpm_popup(wpm):
@@ -53,6 +57,7 @@ def show_wpm_popup(wpm):
     else:
         message = f"Your typing speed: {wpm:.2f} WPM"
     messagebox.showinfo("Typing Speed", message)
+
 
 # Function to start the test and countdown timer
 def start_test():
@@ -64,15 +69,16 @@ def start_test():
     stop_button.config(state=tk.NORMAL)
     calculate_button.config(state=tk.NORMAL)
     window.after(1000, update_timer)
-    # Choose a new random sample text for the test
     chosen_sample_text = choose_random_sample_text(SAMPLE_TEXT_FILE)
     sample_text_label.config(text=chosen_sample_text)
+
 
 # Function to stop the test
 def stop_test():
     text_input.config(state=tk.DISABLED)
     stop_button.config(state=tk.DISABLED)
     calculate_button.config(state=tk.NORMAL)
+
 
 # Function to update the timer and check for test completion
 def update_timer():
@@ -85,29 +91,34 @@ def update_timer():
     else:
         window.after(1000, update_timer)
 
+
 # Create the main window
 window = tk.Tk()
 window.title("Typing Speed Test")
+window.config(padx=20, pady=20)
 
-# Create and place widgets
+# Labels
 text_label = tk.Label(window, text="Type the following text:")
 text_label.pack()
 
 sample_text_label = tk.Label(window, text="")
 sample_text_label.pack()
 
-text_input = tk.Text(window, width=40, height=5)
+# Inputs
+text_input = tk.Text(window, width=40, height=5, padx=10, pady=5)
 text_input.pack()
 
-start_button = tk.Button(window, text="Start Test", command=start_test)
+# Buttons
+start_button = tk.Button(window, text="Start Test",borderwidth=0, command=start_test, padx=10, pady=5)
 start_button.pack()
 
-stop_button = tk.Button(window, text="Stop Test", command=stop_test, state=tk.DISABLED)
+stop_button = tk.Button(window, text="Stop Test",borderwidth=0, command=stop_test, state=tk.DISABLED, padx=10, pady=5)
 stop_button.pack()
 
-calculate_button = tk.Button(window, text="Calculate WPM", command=calculate_wpm, state=tk.DISABLED)
+calculate_button = tk.Button(window, text="Calculate WPM",borderwidth=0, command=calculate_wpm, state=tk.DISABLED, padx=10, pady=5)
 calculate_button.pack()
 
+# Labels
 result_label = tk.Label(window, text="")
 result_label.pack()
 
