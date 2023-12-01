@@ -2,6 +2,7 @@ import tkinter as tk
 import tkinter.messagebox as messagebox
 import time
 import random
+from ttkbootstrap import Style
 
 
 # Function to choose a random sample text from a file
@@ -96,6 +97,7 @@ def update_timer():
 window = tk.Tk()
 window.title("Typing Speed Test")
 window.config(padx=20, pady=20)
+style = Style(theme="superhero")
 
 # Labels
 text_label = tk.Label(window, text="Type the following text:")
